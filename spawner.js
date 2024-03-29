@@ -1,9 +1,11 @@
-const spawner = {
+var cost = require('utils').cost
+module.exports = {
     cycle: function (spawn){
-        console.log("Spawn: [" + spawn.name + ", " + spawn.store.getUsedCapacity(RESOURCE_ENERGY) + "/" + spawn.store.getCapacity(RESOURCE_ENERGY) + "]")
-        if (spawn.store.getUsedCapacity(RESOURCE_ENERGY) >= 200) {
-            spawn.spawnCreep([WORK, CARRY, MOVE], 'Worker' + Game.time, {memory: {role: 'unemployed'}})
+        let room = Game.rooms[spawn.room.name]
+        console.log("Spawn: [" + spawn.name + ", " + room.energyAvailable + "/" + room.energyCapacityAvailable + "]")
+        let genome = [WORK, CARRY, MOVE, MOVE]
+        if (room.energyAvailable >= cost(genome)){
+            spawn.spawnCreep(genome, 'Worker' + Game.time, {memory: {role: 'unemployed'}})
         }
     }
 }
-module.exports = spawner

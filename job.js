@@ -5,7 +5,7 @@ var jobs = {
 }
 
 
-var job = {
+module.exports = {
     cycle: function(job){
         if (job.completed){
             this.cleanup(job)
@@ -60,9 +60,11 @@ var job = {
             let excess = job.assigned.length - job.staffing
             for (let e = 0; e < excess; e++){
                 let creep = Game.getObjectById(Memory.jobs[job.id].assigned.pop())
-                creep.memory.job = null
-                creep.memory.target = null
-                creep.memory.role = 'unemployed'
+                let mem = creep.memory
+                mem.role = 'unemployed'
+                mem.job = null
+                mem.target = null
+                creep.memory = mem
             }
         }
     },
@@ -70,12 +72,12 @@ var job = {
     cleanup: function(job){
         for (let c in job.assigned){
             let creep = Game.getObjectById(job.assigned[c])
-            creep.memory.job = null
-            creep.memory.target = null
-            creep.memory.role = 'unemployed'
+            let mem = creep.memory
+            mem.role = 'unemployed'
+            mem.job = null
+            mem.target = null
+            creep.memory = mem
         }
         delete Memory.jobs[job.id]
     }
 }
-
-module.exports = job;

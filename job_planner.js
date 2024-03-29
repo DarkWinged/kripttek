@@ -1,4 +1,4 @@
-var planner = {
+module.exports = {
     cycle: function(room){
         if (!room.memory.jobs){
             this.init(room)
@@ -22,7 +22,9 @@ var planner = {
             }
         }
         let controller = room.controller
-        this.create_job(room, 'upgrade', controller.id)
+        if (controller.owner.username == this.USERNAME) {
+            this.create_job(room, 'upgrade', controller.id)
+        }
     },
 
     create_job: function(room, type, target, staffing=2){
@@ -41,5 +43,3 @@ var planner = {
         return Object.values(Memory.jobs).filter((job) => job.target == site.id).length < 1
     }
 }
-
-module.exports = planner;

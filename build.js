@@ -1,4 +1,4 @@
-var build = {
+module.exports = {
     run: function(job){
         let site = Game.getObjectById(job.target)
         if (!site || site.progress == site.progressTotal){
@@ -6,20 +6,22 @@ var build = {
         }
         console.log(`Site: ${site.pos} ${(site.progress/site.progressTotal)*100}% progress`)
 
-        if (job.assigned.length < job.staffing){
-            let creep = _.find(Game.creeps, this.filter_prospects)
-            if (creep){
-                creep.memory.job = job.id
-                creep.memory.target = job.target
-                creep.memory.role = 'builder'
-                job.assigned.push(creep.id)
-            }
-        }
+        if (job.assigned.length >= job.staffing) return false
+        let creep = _.find(Game.creeps, this.filter_prospects)
+        if (!creep) return false
+
+        let mem = creep.memory
+        mem.job = job.id
+        mem.target = job.target
+        mem.target_pos = site.pos
+        mem.role = 'builder'
+        creep.memory = mem
+        job.assigned.push(creep.id)
+        Memory.jobs[job.id] = job
     },
 
     filter_prospects: function(creep){
-        return (creep.memory.role == 'builder' || creep.memory.role == 'unemployed') && creep.memory.job == null
+        let mem = creep.memory
+        return (mem.role == 'builder' || mem.role == 'unemployed') && mem.job == null
     },
 }
-
-module.exports = build;
