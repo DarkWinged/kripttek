@@ -31,6 +31,11 @@ module.exports = {
             return mem
         } else {
             var container = find_nearest_building(creep.pos, {filter: this.filter_container})
+            if (!container) {
+                let spawn = Object.values(Game.spawns)[0]
+                creep.moveTo(spawn)
+                return mem
+            }
             if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE){
                 creep.moveTo(container)
             } else if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0){

@@ -34,13 +34,9 @@ module.exports = {
             if (!deposit || deposit.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
                 deposit = find_nearest_building(creep.pos, {filter: this.filter_deposit})
                 if (!deposit) {
-                    deposit = Object.values(Game.spawns).filter(s => s.store.getFreeCapacity(RESOURCE_ENERGY) > 0)[0]
-                    if (!deposit) {
-                        if (this.debug) {
-                            console.log("No deposit found")
-                        }
-                        return mem
-                    }
+                    let spawn = Object.values(Game.spawns)[0]
+                    creep.moveTo(spawn)
+                    return mem
                 }
                 mem.deposit = deposit.id
             }
