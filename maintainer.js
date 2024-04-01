@@ -1,6 +1,4 @@
-var find_nearest_building = require('utils').find_nearest_building
-var find_next_room = require('utils').find_next_room
-
+var {find_next_room, find_nearest_building} = require('utils')
 module.exports = {
     run: function(creep){
         let mem = creep.memory
@@ -9,16 +7,16 @@ module.exports = {
         } else if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0){
             mem.active = true
         }
-        mem = this.construct(creep, mem)
+        mem = this.repair(creep, mem)
         creep.memory = mem
-        creep.say(`🔨${creep.store.getUsedCapacity()}/${creep.store.getCapacity()}`)
+        creep.say(`🔧${creep.store.getUsedCapacity()}/${creep.store.getCapacity()}`)
     },
 
-    construct: function(creep, mem){
+    repair: function(creep, mem){
         if (mem.active){
-            var target = Game.getObjectById(mem.target)
-            if (creep.build(target) == ERR_NOT_IN_RANGE){
-                if (creep.room.name != mem.target_pos.roomName) {
+            let target = Game.getObjectById(mem.target)
+            if (creep.repair(target) == ERR_NOT_IN_RANGE){
+                if (creep.room.name != mem.target_pos.roomName){
                     let next = find_next_room(creep.room.name, mem.target_pos.roomName)
                     let exit = creep.room.findExitTo(Game.rooms[next])
                     creep.moveTo(creep.pos.findClosestByPath(exit))
@@ -27,28 +25,31 @@ module.exports = {
                 }
             } else if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0){
                 mem.active = false
-                mem = this.construct(creep)
+                mem = this.repair(creep, mem)
             }
             return mem
         } else {
-            var container = find_nearest_building(creep.pos, {filter: this.filter_container})
-            if (!container) {
-                let spawn = Object.values(Game.spawns)[0]
-                creep.moveTo(spawn)
-                return mem
+            let deposit = Game.getObjectById(mem.deposit)
+            if (!deposit || deposit.store.getUsedCapacity(RESOURCE_ENERGY) == 0){
+                deposit = find_nearest_building(creep.pos, {filter: this.filter_deposit})
+                if (!deposit){
+                    let spawn = Object.values(Game.spawns)[0]
+                    creep.moveTo(spawn)
+                    return mem
+                }
+                mem.deposit = deposit.id
             }
-            if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE){
-                creep.moveTo(container)
+            if (creep.withdraw(deposit, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE){
+                creep.moveTo(deposit)
             } else if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0){
                 mem.active = true
-                mem = this.construct(creep)
+                mem = this.repair(creep, mem)
             }
             return mem
         }
     },
 
-    filter_container: function(structure){
+    filter_deposit: function(structure){
         return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN || structure.structureType == STRUCTURE_STORAGE) && structure.store.getUsedCapacity(RESOURCE_ENERGY) > 0
     }
-
 }

@@ -2,7 +2,7 @@ var roles = {
     harvester: require('harvester'),
     upgrader: require('upgrader'),
     builder: require('builder'),
-    // repairer: require('repairer')
+    maintainer: require('maintainer')
 }
 var unemployed = require('unemployed')
 module.exports = {

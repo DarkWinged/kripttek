@@ -8,6 +8,12 @@ module.exports = {
             let site = sites[s]
             this.create_job(room, 'build', site.id, staffing=1)
         }
+        let assigned_maintaince_sites = _.filter(Object.values(Memory.jobs), (job) => job.type == 'maintain').map((job) => job.target) 
+        let maintenance = room.find(FIND_STRUCTURES, {filter: (structure) => structure.hits < structure.hitsMax && !(structure.id in assigned_maintaince_sites)}).sort((a, b) => a.hits/a.hitsMax - b.hits/b.hitsMax)
+        for (let m in maintenance){
+            let site = maintenance[m]
+            this.create_job(room, 'maintain', site.id, staffing=1)
+        }
     },
 
     init: function(room){

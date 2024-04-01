@@ -2,6 +2,7 @@ var jobs = {
     harvest: require('harvest'),
     upgrade: require('upgrade'),
     build: require('build'),
+    maintain: require('maintain')
 }
 
 
