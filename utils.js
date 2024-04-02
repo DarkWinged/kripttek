@@ -41,6 +41,7 @@ module.exports = {
             mem.role = 'unemployed'
             creep.memory = mem
         }
+        console.log('Reset all jobs')
     },
 
     unemploy_all: function(){
@@ -58,6 +59,7 @@ module.exports = {
             job.assigned = []
             Memory.jobs[j] = job
         }
+        console.log('Unemployed all creeps')
     },
 
     find_next_room: function(current, target){

@@ -18,9 +18,13 @@ module.exports.loop = function () {
             imports[i].debug = debug
             imports[i].USERNAME = USERNAME
         }
-        for (let j in Memory.jobs){
-            let job = Memory.jobs[j]
-            imports.profession.cycle(job)
+        let resource_jobs = _.filter(Memory.jobs, (job) => job.type == 'harvest')
+        for (let j in resource_jobs){
+            imports.profession.cycle(resource_jobs[j])
+        }
+        let non_resource_jobs = _.filter(Memory.jobs, (job) => job.type != 'harvest')
+        for (let j in non_resource_jobs){
+            imports.profession.cycle(non_resource_jobs[j])
         }
         for (let r in Game.rooms) {
             let room = Game.rooms[r]

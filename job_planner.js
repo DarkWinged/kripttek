@@ -28,7 +28,7 @@ module.exports = {
             }
         }
         let controller = room.controller
-        if (controller.owner.username == this.USERNAME) {
+        if (controller.owner && controller.owner.username == this.USERNAME) {
             this.create_job(room, 'upgrade', controller.id)
         }
     },

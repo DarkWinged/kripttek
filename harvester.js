@@ -36,6 +36,7 @@ module.exports = {
                 if (!deposit) {
                     let spawn = Object.values(Game.spawns)[0]
                     creep.moveTo(spawn)
+                    mem.deposit = null
                     return mem
                 }
                 mem.deposit = deposit.id
