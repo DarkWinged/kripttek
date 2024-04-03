@@ -26,6 +26,21 @@ module.exports = {
         return cost
     },
 
+    fatigue: function(parts, terrain){
+        let multiplier = {road: 1, plain: 2, swamp: 10}[terrain]
+        let generation = 0
+        let reduction = 0
+        for (let p in parts){
+            let part = parts[p]
+            if (part != 'move'){
+                generation += multiplier
+            } else{
+                reduction += 2
+            }
+        }
+        return Math.max(generation - reduction, 0)
+    },
+
     reset_jobs: function() {
         Memory.jobs = {}
         for (let r in Game.rooms) {

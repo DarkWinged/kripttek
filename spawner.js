@@ -3,7 +3,7 @@ module.exports = {
     cycle: function (spawn){
         let room = Game.rooms[spawn.room.name]
         console.log("Spawn: [" + spawn.name + ", " + room.energyAvailable + "/" + room.energyCapacityAvailable + "]")
-        let genome = [WORK, CARRY, MOVE, MOVE]
+        let genome = [WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE]
         if (3 > Object.keys(Game.creeps).length || room.energyCapacityAvailable <= 200){
             genome = [WORK, CARRY, MOVE]
         }
