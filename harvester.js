@@ -35,7 +35,11 @@ module.exports = {
                 deposit = find_nearest_building(creep.pos, {filter: this.filter_deposit})
                 if (!deposit) {
                     let spawn = Object.values(Game.spawns)[0]
-                    creep.moveTo(spawn)
+                    if (creep.room.name == spawn.room.name) {
+                        creep.moveTo(Game.flags['Harvester'])
+                    } else {
+                        creep.moveTo(spawn)
+                    }
                     mem.deposit = null
                     return mem
                 }
