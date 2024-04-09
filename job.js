@@ -3,6 +3,7 @@ var jobs = {
 	upgrade: require("upgrade"),
 	build: require("build"),
 	maintain: require("maintain"),
+	distribute: require("distribute"),
 }
 
 module.exports = {
@@ -11,11 +12,11 @@ module.exports = {
 			this.cleanup(job)
 			return
 		}
-		if (job.assigned.length < job.staffing) {
+		this.remove_expired(job)
+		if (job.assigned.length > job.staffing) {
 			this.unemploy_excess(job)
 		}
 		// this.remove_expired(job)
-		this.remove_vacant(job)
 		console.log(
 			"Job: " + job.type + " " + job.target,
 			job.assigned.length + "/" + job.staffing
@@ -68,19 +69,20 @@ module.exports = {
 	},
 
 	unemploy_excess: function (job) {
-		if (job.assigned.length > job.staffing) {
-			let excess = job.assigned.length - job.staffing
-			for (let e = 0; e < excess; e++) {
-				let creep = Game.getObjectById(
-					Memory.jobs[job.id].assigned.pop()
-				)
-				let mem = creep.memory
-				mem.role = "unemployed"
-				mem.job = null
-				mem.target = null
-				creep.memory = mem
-			}
+		while (job.assigned.length > job.staffing) {
+			let creep = Game.getObjectById(job.assigned[0])
+			this.unemploy(job, creep)
 		}
+	},
+
+	unemploy: function (job, creep) {
+		let mem = creep.memory
+		mem.role = "unemployed"
+		mem.job = null
+		mem.target = null
+		creep.memory = mem
+		job.assigned = job.assigned.filter((c) => c != creep.id)
+		Memory.jobs[job.id] = job
 	},
 
 	cleanup: function (job) {

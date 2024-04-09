@@ -21,7 +21,13 @@ module.exports = {
 			.sort((a, b) => a.hits / a.hitsMax - b.hits / b.hitsMax)
 		for (let m in maintenance) {
 			let site = maintenance[m]
-			this.create_job(room, "maintain", site.id, (staffing = 1))
+			if (
+				Object.values(Memory.jobs).filter(
+					(job) => job.target == site.id
+				).length < 1
+			) {
+				this.create_job(room, "maintain", site.id, (staffing = 1))
+			}
 		}
 	},
 

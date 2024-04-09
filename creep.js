@@ -3,6 +3,7 @@ var roles = {
 	upgrader: require("upgrader"),
 	builder: require("builder"),
 	maintainer: require("maintainer"),
+	distributor: require("distributor"),
 }
 var unemployed = require("unemployed")
 module.exports = {
@@ -16,22 +17,20 @@ module.exports = {
 		}
 		if (this.debug && mem.role != "unemployed") {
 			console.log(
-				"Creep: [" +
-					creep.name +
-					", " +
-					mem.role +
-					", " +
-					mem.job +
-					", " +
-					creep.ticksToLive +
-					"]"
+				`Creep: [${creep.name}, ${mem.role}, ${mem.job}, ${mem.ticksToLive}]`
 			)
 		}
 		if (mem.role in roles && mem.job) {
 			creep.memory = mem
-			return roles[mem.role].run(creep)
+			let cpu_usage = Game.cpu.getUsed()
+			let result = roles[mem.role].run(creep)
+			let creep_cpu_usage = Game.cpu.getUsed() - cpu_usage
+			console.log(
+				`<font color="seegreen">${mem.role} creep cpu usage: ${creep_cpu_usage}</font>`
+			)
+			return result
 		} else if (mem.role != "unemployed") {
-			console.log("Creep: role(" + mem.role + ") not found")
+			console.log(`Creep: role(${mem.role}) not found`)
 		}
 		mem.role = "unemployed"
 		mem.job = null

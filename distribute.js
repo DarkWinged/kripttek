@@ -1,16 +1,13 @@
 module.exports = {
 	run: function (job) {
-		let controller = Game.getObjectById(job.target)
+		let storage = Game.getObjectById(job.target)
 		console.log(
-			`Controller: ${controller.pos} lvl-${controller.level} ${
-				(controller.progress / controller.progressTotal) * 100
-			}% progress`
+			`Storage: ${storage.pos} ${
+				storage.store[RESOURCE_ENERGY]
+			}/${storage.store.getCapacity(RESOURCE_ENERGY)}`
 		)
 
-		let store = controller.room.storage
-		if (store) {
-			job.staffing = Math.floor(store.store[RESOURCE_ENERGY] / 50000) + 2
-		}
+		job.staffing = 2 + Math.floor(storage.store[RESOURCE_ENERGY] / 50000)
 
 		if (!(job.assigned.length < job.staffing)) return
 		let creep = _.find(Game.creeps, this.filter_prospects)
@@ -19,8 +16,7 @@ module.exports = {
 		let mem = creep.memory
 		mem.job = job.id
 		mem.target = job.target
-		mem.target_pos = controller.pos
-		mem.role = "upgrader"
+		mem.role = "distributor"
 		creep.memory = mem
 		job.assigned.push(creep.id)
 		Memory.jobs[job.id] = job
@@ -29,7 +25,7 @@ module.exports = {
 	filter_prospects: function (creep) {
 		let mem = creep.memory
 		return (
-			(mem.role == "upgrader" || mem.role == "unemployed") &&
+			(mem.role == "distributor" || mem.role == "unemployed") &&
 			mem.job == null
 		)
 	},

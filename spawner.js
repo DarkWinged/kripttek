@@ -26,7 +26,7 @@ module.exports = {
 				console.log("Unemployment rate: " + unemployment_rate)
 			if (unemployment_rate < 5) {
 				spawn.spawnCreep(genome, "Worker" + Game.time, {
-					memory: { role: "unemployed" },
+					memory: { role: "unemployed", spawnRoom: spawn.room.name },
 				})
 			}
 		}
