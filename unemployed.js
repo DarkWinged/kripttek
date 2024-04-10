@@ -1,31 +1,26 @@
+var task = require("task")
 module.exports = {
 	run: function (creep) {
+		let mem = creep.memory
 		if (creep.store.getUsedCapacity() > 0) {
-			let deposit = creep.memory.deposit
-			if (!deposit) {
-				deposit = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
-					filter: (structure) => {
-						return (
-							(structure.structureType == STRUCTURE_EXTENSION ||
-								structure.structureType == STRUCTURE_SPAWN ||
-								structure.structureType == STRUCTURE_STORAGE) &&
-							structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
-						)
-					},
-				})
-			}
-			if (!deposit) {
-				deposit = Object.values(Game.spawns).filter(
-					(s) => s.store.getFreeCapacity(RESOURCE_ENERGY) > 0
-				)[0]
-			}
-			if (creep.transfer(deposit, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-				creep.moveTo(deposit)
-			}
-			creep.memory.deposit = deposit.id
+			mem = task.interactContainer(creep, mem, true, this.find_deposit)
 		} else {
-			creep.memory = this.patrol(creep, creep.memory)
+			mem = this.patrol(creep, mem)
 		}
+		creep.memory = mem
+	},
+
+	find_deposit: function (creep) {
+		return creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+			filter: (structure) => {
+				return (
+					(structure.structureType == STRUCTURE_EXTENSION ||
+						structure.structureType == STRUCTURE_SPAWN ||
+						structure.structureType == STRUCTURE_STORAGE) &&
+					structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
+				)
+			},
+		})
 	},
 
 	patrol: function (creep, mem) {
